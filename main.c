@@ -12,8 +12,12 @@
 typedef struct object{
     int pos_x;
     int pos_y;
+    struct object *head;
     struct object *next;
 } object;
+typedef struct pixel{
+
+} pixel;
 //define basic parameters
 int score = 0;
 int delta = 1;
@@ -29,6 +33,7 @@ HANDLE console;
 void locate(int x,int y);
 void setColor(int c);
 void clearScreen();
+void refresh();
 
 int main()
 {
