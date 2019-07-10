@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1562733425 source:e:\programs\snake\main.c
+1562736550 source:e:\programs\snake\main.c
 	<stdio.h>
 	<stdlib.h>
 	<time.h>

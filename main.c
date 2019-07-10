@@ -63,11 +63,12 @@ struct object* initSnake(int len, COORD pos){
             head = current;
             p = head;
         }
-        p->next = current;
-
-        current->before = p;
-        if (i != (len - 1))
+        else{
+            p->next = current;
+            current->before = p;
             p = p->next;
+        }
+
     }
     s->head = head;
     s->end = p;
@@ -133,6 +134,7 @@ int getKey(int *direction){
 void move(int *direction, struct object *s){
     *direction = getKey(direction);
     COORD pos = s->pos;
+
     switch (*direction){
         case 1: pos.Y--;break;
         case 2: pos.Y++;break;
@@ -140,18 +142,24 @@ void move(int *direction, struct object *s){
         case 4: pos.X+=2;break;
         default: break;
     }
+    //printf("after direction change(switch):(%d,%d)\n",pos.X,pos.Y);
     //append head in move direction
     struct pixel *p = (struct pixel*)malloc(sizeof(struct pixel));
+    p->before = NULL;
     p->pos = pos;
     p->next = s->head;
+    ((struct pixel*)(s->head))->before = p;
     s->head = p;
+    s->pos = pos;
     locate(p->pos.X, p->pos.Y);
     printf("■");
+
     //remove tail
     p = s->end;
     locate(p->pos.X,p->pos.Y);
     printf(" ");
     p = p->before;
+    //printf("mid(%d,%d)",p->pos.X,p->pos.Y);
     p->next = NULL;
     free(s->end);
     s->end = p;
@@ -182,24 +190,38 @@ int main()
     initScreen(100, 40);
     clearScreen();
     printSnake(snake);
-    locate(0,38);
-    for(struct pixel *p = snake->head;p != NULL;p = p->next){
-        printf("(%d,%d)",p->pos.X,p->pos.Y);
-    }
-    printf("end(%d,%d)",snake->end->pos.X,snake->end->pos.Y);
-    move(&direction, snake);
-
-    locate(0,39);
-    for(struct pixel *p = snake->head;p != NULL;p = p->next){
-        printf("(%d,%d)",p->pos.X,p->pos.Y);
-    }
-    printf("end(%d,%d)",snake->end->pos.X,snake->end->pos.Y);
-//    while (1){
-//
-//        printf("%d",direction);
-//        Sleep(500);
-//
+//    for(struct pixel *p = snake->head;p != NULL;p = p->next){
+//        printf("(%d,%d)",p->pos.X,p->pos.Y);
 //    }
+//    printf("end(%d,%d)\n",snake->end->pos.X,snake->end->pos.Y);
+//    for(struct pixel *p = snake->end;p != NULL;p = p->before){
+//        printf("(%d,%d)",p->pos.X,p->pos.Y);
+//    }
+//    printf("head(%d,%d)\n",snake->head->pos.X,snake->head->pos.Y);
+//    move(&direction, snake);
+//
+//    move(&direction, snake);
+//
+//    move(&direction, snake);
+//    for(struct pixel *p = snake->head;p != NULL;p = p->next){
+//        printf("(%d,%d)",p->pos.X,p->pos.Y);
+//    }
+//    printf("end(%d,%d)\n",snake->end->pos.X,snake->end->pos.Y);
+//    for(struct pixel *p = snake->end;p != NULL;p = p->before){
+//        printf("(%d,%d)",p->pos.X,p->pos.Y);
+//    }
+//    printf("head(%d,%d)\n",snake->head->pos.X,snake->head->pos.Y);
+
+    //locate(0,39);
+
+    while (1){
+        move(&direction, snake);
+        locate(0,39);
+        for(struct pixel *p = snake->head;p != NULL;p = p->next){
+            printf("(%d,%d)",p->pos.X,p->pos.Y);
+        }
+        Sleep(200);
+    }
 
     return 0;
 }
