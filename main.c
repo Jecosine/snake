@@ -19,12 +19,12 @@ typedef HWND (WINAPI *PROCGETCONSOLEWINDOW)();
 PROCGETCONSOLEWINDOW GetConsoleWindow;
 
 typedef struct object{
-    int pos_x;
-    int pos_y;
+    COORD pos = {0,0};
     struct object *head;
-    struct object *next;
+    struct object *end;
 } object;
 typedef struct pixel{
+    COORD pos = {0,0};
     int x;
     int y;
 } pixel;
@@ -33,6 +33,7 @@ int score = 0;
 int delta = 1;
 int state = 0;
 int delay = 200;
+int length = 3;
 //define snake and food
 struct object *snake;
 struct object *food;
@@ -47,12 +48,36 @@ void refresh();
 void move(int *direction, COORD *pos);
 void append(struct object *o);
 void initScreen();
-
+void printSnake();
+*struct object initSnake(int len);
 //get input from keyboard
 //w -> 1  s -> 2  a -> 3  d -> 4
 int getKey(int *direction);
 
 //define functions
+//initialize a snake of certain length(default 3)
+*struct object initSnake(int len){
+    struct pixel *head = NULL;
+    struct pixel *p = NULL;
+    struct pixel *current = NULL;
+    snake = (*struct snake)malloc(sizeof(struct object));
+    //set head and end to null
+    snake.head = NULL;
+    snake.end = NULL;
+    for(int i = 0;i < len; i++){
+        struct pixel *current = (*struct pixel)malloc(sizeof(struct pixel));
+        if(head == NULL){
+            head = current;
+            p = head;
+        }
+        p.next = current;
+        if (i != (len - 1))
+            p = p.next;
+    }
+    snake.head = head;
+    snake.end = p;
+    return snake;
+}
 void clearScreen(){
     system("cls");
 }
@@ -82,19 +107,27 @@ void initScreen(int size_x, int size_y){
 }
 //get input
 int getKey(int *direction){
-    if (GetAsyncKeyState(VK_A) && (direction != rightward))
+    if (GetAsyncKeyState(VK_A) && (direction != rightward)){
+        *direction = 3;
         return 3;
-    if (GetAsyncKeyState(VK_D) && (direction != leftward))
+    }
+    if (GetAsyncKeyState(VK_D) && (direction != leftward)){
+        *direction = 4;
         return 4;
-    if (GetAsyncKeyState(VK_W) && (direction != downward))
+    }
+    if (GetAsyncKeyState(VK_W) && (direction != downward)){
+        *direction = 1;
         return 1;
-    if (GetAsyncKeyState(VK_S) && (direction != upward))
+    }
+    if (GetAsyncKeyState(VK_S) && (direction != upward)){
+        *direction = 2;
         return 2;
+    }
     //return *direction;
 }
 //move snake
 //w -> 1  s -> 2  a -> 3  d -> 4
-void move(int *direction, COORD *pos){
+void move(int *direction, struct object *s){
     *direction = getKey(*direction);
     switch (*direction){
         case 1: pos->Y--;break;
@@ -109,11 +142,15 @@ void test(){
 }
 int main()
 {
+    //set initial coordinate is rows 20 cols 50
     COORD s = {50,20};
+    //set initial direction is left
     int direction = 3;
+
     system("chcp 65001");
     initScreen(100, 40);
     clearScreen();
+    printSnake();
     locate(s.X,s.Y);
     printf("■");
     while (1){
