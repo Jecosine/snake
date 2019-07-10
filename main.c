@@ -19,14 +19,13 @@ typedef HWND (WINAPI *PROCGETCONSOLEWINDOW)();
 PROCGETCONSOLEWINDOW GetConsoleWindow;
 
 typedef struct object{
-    COORD pos = {0,0};
+    COORD pos;
     struct object *head;
     struct object *end;
 } object;
 typedef struct pixel{
-    COORD pos = {0,0};
-    int x;
-    int y;
+    COORD pos;
+    struct pixel *next;
 } pixel;
 //declare basic parameters
 int score = 0;
@@ -127,15 +126,29 @@ int getKey(int *direction){
 }
 //move snake
 //w -> 1  s -> 2  a -> 3  d -> 4
+
+void append(int direction, struct object *s){
+
+    switch (direction):
+
+}
 void move(int *direction, struct object *s){
     *direction = getKey(*direction);
+    COORD pos = s->pos;
     switch (*direction){
-        case 1: pos->Y--;break;
-        case 2: pos->Y++;break;
-        case 3: pos->X-=2;break;
-        case 4: pos->X+=2;break;
+        case 1: pos.Y--;break;
+        case 2: pos.Y++;break;
+        case 3: pos.X-=2;break;
+        case 4: pos.X+=2;break;
         default: break;
     }
+    //append head in move direction
+    struct pixel *newHead = (*struct pixel)malloc(sizeof(struct pixel));
+    newHead->pos = pos;
+    newHead.next = s->head;
+    s->head = newHead;
+    //remove tail
+
 }
 void test(){
 
